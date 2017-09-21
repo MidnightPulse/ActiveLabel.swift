@@ -303,6 +303,13 @@ typealias ElementTuple = (range: NSRange, element: ActiveElement, type: ActiveTy
 
     /// add link attribute
     fileprivate func addLinkAttribute(_ mutAttrString: NSMutableAttributedString) {
+//        let rg = NSRange(location: 0, length: mutAttrString.length)
+//        mutAttrString.enumerateAttributes(in: rg, options: []) { (attr, range, _) in
+//            var mutAttr = attr
+//            mutAttr[NSAttributedStringKey.font] = font!
+//            mutAttr[NSAttributedStringKey.foregroundColor] = textColor
+//            mutAttrString.addAttributes(mutAttr, range: range)
+//        }
         var range = NSRange(location: 0, length: 0)
         var attributes = mutAttrString.attributes(at: 0, effectiveRange: &range)
         
@@ -369,17 +376,27 @@ typealias ElementTuple = (range: NSRange, element: ActiveElement, type: ActiveTy
     /// add line break mode
     fileprivate func addLineBreak(_ attrString: NSAttributedString) -> NSMutableAttributedString {
         let mutAttrString = NSMutableAttributedString(attributedString: attrString)
-
-        var range = NSRange(location: 0, length: 0)
-        var attributes = mutAttrString.attributes(at: 0, effectiveRange: &range)
         
-        let paragraphStyle = attributes[NSAttributedStringKey.paragraphStyle] as? NSMutableParagraphStyle ?? NSMutableParagraphStyle()
-        paragraphStyle.lineBreakMode = NSLineBreakMode.byWordWrapping
-        paragraphStyle.alignment = textAlignment
-        paragraphStyle.lineSpacing = lineSpacing
-        paragraphStyle.minimumLineHeight = minimumLineHeight > 0 ? minimumLineHeight: self.font.pointSize * 1.14
-        attributes[NSAttributedStringKey.paragraphStyle] = paragraphStyle
-        mutAttrString.setAttributes(attributes, range: range)
+        let rg = NSRange(location: 0, length: mutAttrString.length)
+        mutAttrString.enumerateAttribute(.paragraphStyle, in: rg, options: []) { (para, range, _) in
+            let paragraphStyle = para as? NSMutableParagraphStyle ?? NSMutableParagraphStyle()
+            paragraphStyle.lineBreakMode = NSLineBreakMode.byWordWrapping
+            paragraphStyle.alignment = textAlignment
+            paragraphStyle.lineSpacing = lineSpacing
+            paragraphStyle.minimumLineHeight = minimumLineHeight > 0 ? minimumLineHeight: self.font.pointSize * 1.14
+            mutAttrString.addAttributes([.paragraphStyle: paragraphStyle], range: range)
+        }
+
+//        var range = NSRange(location: 0, length: 0)
+//        var attributes = mutAttrString.attributes(at: 0, effectiveRange: &range)
+//
+//        let paragraphStyle = attributes[NSAttributedStringKey.paragraphStyle] as? NSMutableParagraphStyle ?? NSMutableParagraphStyle()
+//        paragraphStyle.lineBreakMode = NSLineBreakMode.byWordWrapping
+//        paragraphStyle.alignment = textAlignment
+//        paragraphStyle.lineSpacing = lineSpacing
+//        paragraphStyle.minimumLineHeight = minimumLineHeight > 0 ? minimumLineHeight: self.font.pointSize * 1.14
+//        attributes[NSAttributedStringKey.paragraphStyle] = paragraphStyle
+//        mutAttrString.setAttributes(attributes, range: range)
 
         return mutAttrString
     }
